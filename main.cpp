@@ -24,13 +24,26 @@ struct building1
     float floor, flat;
     float br=0.0, bg=0.0, bb=0.0, wr=0.0, wg=0.0, wb=0.0;
 };
+                                                                                                                                           // gameBGM;
+                                                                                                                                           // navigatorBGM;
+                                                                                                                                           // LevelUpBGM;
+                                                                                                                                           // deathBGM;
+                                                                                                                                           // gameWinBGM;
+                                                                                                                                           // gameLostBGM;
+                                                                                                                                           // missileBGM;
+                                                                                                                                           // planeCrashBGM;
+                                                                                                                                           // BuildingDestroyBGM;
+float cloudXB1=-.5;
+float cloudXB2=0;
+float cloudXS1=-.8;
+float cloudXS2=.6;
 int gameLife=3;
 int gameLevel=1;
 bool gameStart=false;
 bool gameOver = false;
 bool gameWin = false;
 float bgX=-1.0;
-float scorE=0;
+float scorE=0,scorE2=0,scorE3=0;
 string gameScore="Score: 0";
 vector<Bullet> bullets;
 vector<building1> buildings;
@@ -645,9 +658,9 @@ void reset()
 {
     box1.x=-1.0;
     box1.y=.7;
-   // gameLevel=0;
-  //  gameLife=0;
-   // scorE=0.0;
+    // gameLevel=0;
+    //  gameLife=0;
+    // scorE=0.0;
     buildings=buildingsS;
     gameL="Game Level: "+to_string(gameLevel) ;
 
@@ -947,7 +960,12 @@ void drawScene()
     glClear(GL_COLOR_BUFFER_BIT);
     if(gameStart)
     {
+
         background();
+        cloud1(cloudXB2, 0.56, 0.91, 0.99, 1.00,.9);
+        cloud1(cloudXB1, 0.76, 0.91, 0.99, 1.00,1);
+        cloud1(cloudXS2, 0.76, 0.91, 0.99, 1.00,1.5);
+        cloud1(cloudXS1, 0.5, 0.91, 0.99, 1.00,1.5);
 
         Text3(gameL,-.9,.9);
         Text3(gameScore,0,.9);
@@ -955,10 +973,7 @@ void drawScene()
         if (!gameOver&&!gameWin)
         {
 
-            cloud1(0.0, 0.56, 0.91, 0.99, 1.00,.9);
-            cloud1(-0.5, 0.76, 0.91, 0.99, 1.00,1);
-            cloud1(0.6, 0.76, 0.91, 0.99, 1.00,1.5);
-            cloud1(-0.8, 0.5, 0.91, 0.99, 1.00,1.5);
+
 
             float lifeX=.59;
             for(int i=0; i<gameLife; i++)
@@ -969,6 +984,7 @@ void drawScene()
 
             //fuel bar
             fuelBar(-.5,.9,1,0.0f, 0.25, 0.27);
+
 
             // Draw bullets
 
@@ -995,7 +1011,7 @@ void drawScene()
 
             Text2("Game Over!!",-0.2f, 0.0f);
             Text2("You lost. ",-0.15f, -0.1f);
-          //  Text4(" Press ENTER to continue",.3,-.8);
+            //  Text4(" Press ENTER to continue",.3,-.8);
 
 
         }
@@ -1030,6 +1046,75 @@ void drawScene()
 
     glFlush();
 }
+
+void playGBGM(int t)
+{
+
+PlaySound("MainBGM.wav", NULL,SND_ASYNC|SND_FILENAME|SND_LOOP);
+
+}
+
+void stopLevelUpBGM(int va)
+{
+      PlaySound(NULL, NULL, 0); // Stop playing the current sound
+     if(!gameOver)
+     {
+         glutTimerFunc(30, playGBGM, 0);
+     }
+}
+void levelUpBGM(int v)
+{
+
+    PlaySound("LevelUp.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+    glutPostRedisplay();
+    glutTimerFunc(1000, stopLevelUpBGM, 0);
+
+
+}
+void playGameover()
+{
+
+    PlaySound("gameOver.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+     glutTimerFunc(3200, stopLevelUpBGM, 0);
+}
+void playLifeMinus()
+{
+    PlaySound("lifeminus.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+     glutTimerFunc(1000, stopLevelUpBGM, 0);
+}
+void playexplosion()
+{
+
+    PlaySound("explosion.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+     glutTimerFunc(200, stopLevelUpBGM, 0);
+}
+
+void cloudUpdate(int value)
+{
+    cloudXB1+=.001;
+    cloudXB2+=.001;
+    cloudXS1+=.0005;
+    cloudXS2+=.0005;
+    if(cloudXB1>=1)
+    {
+        cloudXB1=-1.4;
+    }
+    else if(cloudXB2>=1)
+    {
+        cloudXB2=-1.4;
+    }
+    else if(cloudXS1>=1)
+    {
+        cloudXS1=-1.2;
+    }
+    else if(cloudXS2>=1)
+    {
+        cloudXS2=-1.2;
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(30, cloudUpdate, 0);
+}
 bool checkBuildingHeight()
 {
     for(auto b:buildings)
@@ -1050,6 +1135,7 @@ bool checkCollision(float x1, float y1, float w1, float h1, float x2, float y2, 
             y1 + h1 > y2
            )|| fuelX==0;
 }
+
 void planeUpdate(int value)
 {
     // Update plane position
@@ -1085,6 +1171,7 @@ void planeUpdate(int value)
             if(gameLife>0)
             {
                 gameLife--;
+                playLifeMinus();
                 fuelX=.3;
                 scorE=0;
 
@@ -1112,7 +1199,8 @@ void planeUpdate(int value)
             if(gameLife<=0)
             {
                 gameOver = true;
-               // reset();
+                playGameover();
+                // reset();
             }
             break;
 
@@ -1126,9 +1214,10 @@ void planeUpdate(int value)
 
         if(gameLevel<3)
         {
+
             gameLevel+=1;
+           levelUpBGM(0);
             gameL="Game Level: "+to_string(gameLevel);
-            cout<<"Game Level: "<<gameLevel<<endl;
             scorE+=box1.y*6+fuelX*10+gameLife*5; //game score;
             gameScore="";
             stringstream ss;
@@ -1149,13 +1238,12 @@ void planeUpdate(int value)
         }
         else if(gameLevel==3)
         {
-            cout<<"Round win from 1145 line. "<<endl;
             gameScore="";
             stringstream ss;
             ss << fixed <<setprecision(1) << scorE;
             gameScore="Score: "+ss.str();
             gameWin=true;
-           // reset();
+            // reset();
         }
     }
 
@@ -1185,7 +1273,7 @@ void bulletUpdate(int value)
                 if(it->h>.05)
                 {
                     it->floor -= 1;
-                   cout<<"Floor: "<<it->floor<<endl;
+                    playexplosion();
                     if(it->floor==1)
                     {
                         it->h =0;
@@ -1207,7 +1295,7 @@ void bulletUpdate(int value)
                     stringstream ss;
                     ss << fixed <<setprecision(1) << scorE;
                     gameScore="Score: "+ss.str();
-                   // cout<<"Score: "<<scorE<<endl;
+                    // cout<<"Score: "<<scorE<<endl;
                     if(fuelX+.04<=.3)
                     {
                         fuelX+=.04;
@@ -1227,6 +1315,8 @@ void bulletUpdate(int value)
                     if(gameLevel<3)
                     {
                         gameLevel+=1;
+                       levelUpBGM(0);
+                    // stopLevelUpBGM();
                         gameL=to_string(gameLevel);
                         cout<<"Game Level: "<<gameLevel<<endl;
                         if(gameLevel==2)
@@ -1305,7 +1395,58 @@ void keyFun(unsigned char key, int x, int y)
 
 }
 
+bool isHovering = false; // Indicates if the mouse is hovering over the button
+bool isFirstMusicPlaying = false; // Indicates if the first music is currently playing
 
+void playFirstMusic()
+{
+    if (!isFirstMusicPlaying && !gameStart)
+    {
+        PlaySound("NavigateS.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+        isFirstMusicPlaying = true;
+
+
+    }
+}
+
+void stopFirstMusic()
+{
+    if (isFirstMusicPlaying)
+    {
+        PlaySound(NULL, NULL, 0); // Stop the currently playing sound
+        isFirstMusicPlaying = false;
+    }
+}
+void mouseMotion(int x, int y) {
+    float mouseX = (float)x / glutGet(GLUT_WINDOW_WIDTH) * 2 - 1;
+    float mouseY = 1 - (float)y / glutGet(GLUT_WINDOW_HEIGHT) * 2;
+
+    if (mouseX >= -0.19 && mouseX <= 0.19 && mouseY >= 0.305 && mouseY <= 0.435) {
+        if (!isFirstMusicPlaying) {
+            playFirstMusic(); // Start playing the first music on hover
+        }
+    }
+       else if (mouseX >= -0.2 && mouseX <= 0.2 && mouseY >= 0.105 && mouseY <= 0.235)
+        {
+            if (!isFirstMusicPlaying) {
+            playFirstMusic(); // Start playing the first music on hover
+        }
+
+        }
+        else if (mouseX >= -0.2 && mouseX <= 0.2 && mouseY >= -0.095 && mouseY <= 0.035)
+        {
+            if (!isFirstMusicPlaying) {
+            playFirstMusic(); // Start playing the first music on hover
+        }
+
+        }
+
+     else {
+        if (isFirstMusicPlaying) {
+            stopFirstMusic(); // Stop playing the first music on hover exit
+        }
+    }
+}
 void mouseClick(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
@@ -1316,11 +1457,13 @@ void mouseClick(int button, int state, int x, int y)
 
         if (mouseX >= -0.19 && mouseX <= 0.19 && mouseY >= 0.305 && mouseY <= 0.435)
         {
+
+            // PlaySound("NavigateS.wav", NULL,SND_ASYNC|SND_FILENAME|SND_LOOP);
             cout << "Button clicked: START" << endl;
             gameStart = true;
+            stopFirstMusic();
+            PlaySound("GBGM.wav", NULL,SND_ASYNC|SND_FILENAME|SND_LOOP);
         }
-
-
         else if (mouseX >= -0.2 && mouseX <= 0.2 && mouseY >= 0.105 && mouseY <= 0.235)
         {
             cout << "Button clicked: Game Information" << endl;
@@ -1333,6 +1476,7 @@ void mouseClick(int button, int state, int x, int y)
             navigation = 'T';
 
         }
+
     }
 }
 void buildingOne()
@@ -1452,9 +1596,13 @@ int main(int argc, char **argv)
     buildingTwo();
     buildingThree();
 
+
     glutDisplayFunc(drawScene);
     glutKeyboardFunc(keyFun);
     glutMouseFunc(mouseClick);
+     glutPassiveMotionFunc(mouseMotion);
+
+    glutTimerFunc(100,cloudUpdate,0);
     glutTimerFunc(25, planeUpdate, 0);
     glutTimerFunc(25, bulletUpdate, 0);
     glutMainLoop();
