@@ -24,15 +24,43 @@ struct building1
     float floor, flat;
     float br=0.0, bg=0.0, bb=0.0, wr=0.0, wg=0.0, wb=0.0;
 };
-                                                                                                                                           // gameBGM;
-                                                                                                                                           // navigatorBGM;
-                                                                                                                                           // LevelUpBGM;
-                                                                                                                                           // deathBGM;
-                                                                                                                                           // gameWinBGM;
-                                                                                                                                           // gameLostBGM;
-                                                                                                                                           // missileBGM;
-                                                                                                                                           // planeCrashBGM;
-                                                                                                                                           // BuildingDestroyBGM;
+
+void playGBGM(int t)
+{
+
+    PlaySound("MainBGM.wav", NULL,SND_ASYNC|SND_FILENAME|SND_LOOP);
+
+}
+
+void stopLevelUpBGM(int n)
+{
+    PlaySound(NULL, NULL, 0);
+}
+void levelUpBGM()
+{
+    PlaySound("LevelUp.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+    glutTimerFunc(1000, stopLevelUpBGM, 0);
+}
+void playGameover()
+{
+    PlaySound("gameOver.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+    glutTimerFunc(4300, stopLevelUpBGM, 0);
+}
+void playLifeMinus()
+{
+    PlaySound("lifeminus.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+    glutTimerFunc(1000, stopLevelUpBGM, 0);
+}
+void playexplosion()
+{
+    PlaySound("explosion.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+    glutTimerFunc(200, stopLevelUpBGM, 0);
+}
+void gamewin()
+{
+    PlaySound("gameWin.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+    glutTimerFunc(2000, stopLevelUpBGM, 0);
+}
 float cloudXB1=-.5;
 float cloudXB2=0;
 float cloudXS1=-.8;
@@ -451,11 +479,10 @@ void plane(float x, float y,float z)
     box(x-.28,y+.06,-.04,.01,r1,g1,b1);
     box(x-.29,y+.06,-.01,.04,r1,g1,b1);
 
-    //
+
     box(x-.04,y+.03,-.03,.02,0.24, 0.27, 0.27);
     box(x-.03,y+.03,-.01,.01,0.24, 0.27, 0.27);
     box(x-.08,y+.03,-.02,.02,0.24, 0.27, 0.27);
-    // box(x-.112,y+.03,-.01,.02,0.24, 0.27, 0.27);
 
     float t=y;
     for(int i=0; i<3; i++)
@@ -572,7 +599,6 @@ void Text(string text,float x,float y)
 }
 void Text2(string text, float x, float y)
 {
-    //0.00, 0.25, 0.27
     glColor3f(0.0f, 0.25, 0.27);
 
     glRasterPos2f(x, y);
@@ -586,7 +612,6 @@ void Text2(string text, float x, float y)
 }
 void Text3(string text, float x, float y)
 {
-    //0.00, 0.25, 0.27
     glColor3f(0.0f, 0.25, 0.27);
 
     glRasterPos2f(x, y);
@@ -601,7 +626,6 @@ void Text3(string text, float x, float y)
 
 void Text4(string text, float x, float y)
 {
-    //0.00, 0.25, 0.27
     glColor3f(0.0f, 0.25, 0.27);
 
     glRasterPos2f(x, y);
@@ -616,7 +640,6 @@ void Text4(string text, float x, float y)
 
 void Text5(string text, float x, float y)
 {
-    //0.00, 0.25, 0.27
     glColor3f(1, 1, 1);
 
     glRasterPos2f(x, y);
@@ -634,23 +657,18 @@ void menu()
     Text2("WELCOME", -.1, .8);
     Text2("TO LAND THE PLANE", -.2, .7);
 
-    // START button
     box(-.2, .3, .4, .14, 0.0, 0.0, 0.0);
     box(-.195, .305, .39, .13, 0.00, 0.30, 0.27);
     Text5("START", -.08, .36);
 
-    // Game Information button (replaces Level 2)
     box(-.2, .1, .4, .14, 0.0, 0.0, 0.0);
     box(-.195, .105, .39, .13, 0.00, 0.30, 0.27);
     Text5("Game Information", -.135, .15);
 
-    // Team Information button (replaces Level 3)
     box(-.2, -0.1, .4, .14, 0.0, 0.0, 0.0);
     box(-.195, -0.095, .39, .13,0.00, 0.30, 0.27);
     Text5("Team Information", -.135, -0.05);
 
-    // Remove the Level 3 button and its box
-    // Remove the Level 2 button and its box
 }
 
 
@@ -966,7 +984,6 @@ void drawScene()
         cloud1(cloudXB1, 0.76, 0.91, 0.99, 1.00,1);
         cloud1(cloudXS2, 0.76, 0.91, 0.99, 1.00,1.5);
         cloud1(cloudXS1, 0.5, 0.91, 0.99, 1.00,1.5);
-
         Text3(gameL,-.9,.9);
         Text3(gameScore,0,.9);
 
@@ -982,11 +999,8 @@ void drawScene()
                 lifeX+=.11;
             }
 
-            //fuel bar
             fuelBar(-.5,.9,1,0.0f, 0.25, 0.27);
 
-
-            // Draw bullets
 
             for(auto &bullet : bullets)
             {
@@ -994,7 +1008,6 @@ void drawScene()
             }
             plane(box1.x,box1.y,1);
 
-            // Draw buildings
             for(auto &building : buildings)
             {
 
@@ -1004,21 +1017,18 @@ void drawScene()
 
         }
 
-        // Display "Game Over" if the game is over
         if (gameOver)
         {
-            glColor3f(1.0f, 0.0f, 0.0f);
 
             Text2("Game Over!!",-0.2f, 0.0f);
             Text2("You lost. ",-0.15f, -0.1f);
-            //  Text4(" Press ENTER to continue",.3,-.8);
 
 
         }
         if(gameWin)
         {
             Text2("You Won!",-0.2f, 0.0f);
-            //Text4(" Press ENTER to continue",.3,-.8);
+
         }
 
     }
@@ -1047,47 +1057,7 @@ void drawScene()
     glFlush();
 }
 
-void playGBGM(int t)
-{
 
-PlaySound("MainBGM.wav", NULL,SND_ASYNC|SND_FILENAME|SND_LOOP);
-
-}
-
-void stopLevelUpBGM(int va)
-{
-      PlaySound(NULL, NULL, 0); // Stop playing the current sound
-     if(!gameOver)
-     {
-         glutTimerFunc(30, playGBGM, 0);
-     }
-}
-void levelUpBGM(int v)
-{
-
-    PlaySound("LevelUp.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
-    glutPostRedisplay();
-    glutTimerFunc(1000, stopLevelUpBGM, 0);
-
-
-}
-void playGameover()
-{
-
-    PlaySound("gameOver.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
-     glutTimerFunc(3200, stopLevelUpBGM, 0);
-}
-void playLifeMinus()
-{
-    PlaySound("lifeminus.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
-     glutTimerFunc(1000, stopLevelUpBGM, 0);
-}
-void playexplosion()
-{
-
-    PlaySound("explosion.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
-     glutTimerFunc(200, stopLevelUpBGM, 0);
-}
 
 void cloudUpdate(int value)
 {
@@ -1138,7 +1108,7 @@ bool checkCollision(float x1, float y1, float w1, float h1, float x2, float y2, 
 
 void planeUpdate(int value)
 {
-    // Update plane position
+
     if(gameStart)
     {
         box1.x += 0.005f;
@@ -1156,18 +1126,18 @@ void planeUpdate(int value)
     if(box1.x > 1.3)
     {
         box1.x = -1.2;
-        box1.y -= 0.15f; // Decrease plane height after completing x-axis movement
+        box1.y -= 0.15f;
 
     }
-//box1-> plane
+
 
 
     for(auto &building : buildings)
     {
-        //cout<<"Fuel: "<<fuelX<<endl;
+
         if (checkCollision(box1.x-.05, box1.y-.05, box1.width, box1.height, building.x, building.y, building.w, building.h))
         {
-            //gameOver = true;
+
             if(gameLife>0)
             {
                 gameLife--;
@@ -1176,7 +1146,7 @@ void planeUpdate(int value)
                 scorE=0;
 
                 gameScore="Score: 0";
-                //gameScore=
+
             }
 
 
@@ -1200,7 +1170,7 @@ void planeUpdate(int value)
             {
                 gameOver = true;
                 playGameover();
-                // reset();
+
             }
             break;
 
@@ -1216,9 +1186,9 @@ void planeUpdate(int value)
         {
 
             gameLevel+=1;
-           levelUpBGM(0);
+            levelUpBGM();
             gameL="Game Level: "+to_string(gameLevel);
-            scorE+=box1.y*6+fuelX*10+gameLife*5; //game score;
+            scorE+=box1.y*6+fuelX*10+gameLife*5;
             gameScore="";
             stringstream ss;
             ss << fixed <<setprecision(1) << scorE;
@@ -1238,14 +1208,17 @@ void planeUpdate(int value)
         }
         else if(gameLevel==3)
         {
+
             gameScore="";
             stringstream ss;
             ss << fixed <<setprecision(1) << scorE;
             gameScore="Score: "+ss.str();
+            gamewin();
             gameWin=true;
-            // reset();
+
         }
     }
+
 
 
     glutPostRedisplay();
@@ -1259,8 +1232,6 @@ void bulletUpdate(int value)
     for(auto &bullet : bullets)
     {
         bullet.y -= 0.02f;
-
-        // for(auto &building : buildings)
 
         for(auto it=buildings.begin(); it!=buildings.end(); ++it)
 
@@ -1281,13 +1252,14 @@ void bulletUpdate(int value)
                     else
                     {
                         it->h -= 0.11;
+
                     }
 
 
 
                     if (it->floor <= 0)
                     {
-                        it->floor = 0; // Minimum floor count to prevent negative values
+                        it->floor = 0;
                     }
 
                     scorE+=3*(box1.y+1);
@@ -1295,7 +1267,6 @@ void bulletUpdate(int value)
                     stringstream ss;
                     ss << fixed <<setprecision(1) << scorE;
                     gameScore="Score: "+ss.str();
-                    // cout<<"Score: "<<scorE<<endl;
                     if(fuelX+.04<=.3)
                     {
                         fuelX+=.04;
@@ -1309,14 +1280,13 @@ void bulletUpdate(int value)
                 }
                 else
                 {
-                    // gameWin=true;
                     it->h = 0;
-                    //cout<<"Building Height: "<<it->height<<endl;
+
                     if(gameLevel<3)
                     {
                         gameLevel+=1;
-                       levelUpBGM(0);
-                    // stopLevelUpBGM();
+                        levelUpBGM();
+
                         gameL=to_string(gameLevel);
                         cout<<"Game Level: "<<gameLevel<<endl;
                         if(gameLevel==2)
@@ -1330,24 +1300,27 @@ void bulletUpdate(int value)
                         box1.x=-1.0;
                         box1.y=.7;
                         gameLife=3;
-                        //reset();
+
 
                     }
                     else if( gameLevel==3)
                     {
-                        //scorE+=box1.y*6+fuelX*10+gameLife*5;
+
+
                         cout<<"Round win from 1242 line. "<<endl;
                         gameScore="";
                         stringstream ss;
                         ss << fixed <<setprecision(1) << scorE;
                         gameScore="Score: "+ss.str();
+                        gamewin();
                         gameWin=true;
-                        reset();
+
                     }
 
                 }
 
                 bullet.y = -10.0f;
+
             }
         }
 
@@ -1370,10 +1343,9 @@ void addBullet(int val)
 
 void keyFun(unsigned char key, int x, int y)
 {
-    // Check if the spacebar is pressed
+
     if(key == ' ' && canFire)
     {
-        //addBullet(0);
         canFire=false;
         glutTimerFunc(180,addBullet,0);
     }
@@ -1395,8 +1367,8 @@ void keyFun(unsigned char key, int x, int y)
 
 }
 
-bool isHovering = false; // Indicates if the mouse is hovering over the button
-bool isFirstMusicPlaying = false; // Indicates if the first music is currently playing
+bool isHovering = false;
+bool isFirstMusicPlaying = false;
 
 void playFirstMusic()
 {
@@ -1411,39 +1383,44 @@ void playFirstMusic()
 
 void stopFirstMusic()
 {
-    if (isFirstMusicPlaying)
-    {
-        PlaySound(NULL, NULL, 0); // Stop the currently playing sound
-        isFirstMusicPlaying = false;
-    }
+
+    PlaySound(NULL, NULL, 0);
+
 }
-void mouseMotion(int x, int y) {
+void mouseMotion(int x, int y)
+{
     float mouseX = (float)x / glutGet(GLUT_WINDOW_WIDTH) * 2 - 1;
     float mouseY = 1 - (float)y / glutGet(GLUT_WINDOW_HEIGHT) * 2;
 
-    if (mouseX >= -0.19 && mouseX <= 0.19 && mouseY >= 0.305 && mouseY <= 0.435) {
-        if (!isFirstMusicPlaying) {
-            playFirstMusic(); // Start playing the first music on hover
+    if (mouseX >= -0.19 && mouseX <= 0.19 && mouseY >= 0.305 && mouseY <= 0.435)
+    {
+        if (!isFirstMusicPlaying)
+        {
+            // playFirstMusic();
         }
     }
-       else if (mouseX >= -0.2 && mouseX <= 0.2 && mouseY >= 0.105 && mouseY <= 0.235)
+    else if (mouseX >= -0.2 && mouseX <= 0.2 && mouseY >= 0.105 && mouseY <= 0.235)
+    {
+        if (!isFirstMusicPlaying)
         {
-            if (!isFirstMusicPlaying) {
-            playFirstMusic(); // Start playing the first music on hover
+            // playFirstMusic(); // Start playing the first music on hover
         }
 
-        }
-        else if (mouseX >= -0.2 && mouseX <= 0.2 && mouseY >= -0.095 && mouseY <= 0.035)
+    }
+    else if (mouseX >= -0.2 && mouseX <= 0.2 && mouseY >= -0.095 && mouseY <= 0.035)
+    {
+        if (!isFirstMusicPlaying)
         {
-            if (!isFirstMusicPlaying) {
-            playFirstMusic(); // Start playing the first music on hover
+            // playFirstMusic(); // Start playing the first music on hover
         }
 
-        }
+    }
 
-     else {
-        if (isFirstMusicPlaying) {
-            stopFirstMusic(); // Stop playing the first music on hover exit
+    else
+    {
+        if (isFirstMusicPlaying)
+        {
+            //stopFirstMusic(); // Stop playing the first music on hover exit
         }
     }
 }
@@ -1462,7 +1439,7 @@ void mouseClick(int button, int state, int x, int y)
             cout << "Button clicked: START" << endl;
             gameStart = true;
             stopFirstMusic();
-            PlaySound("GBGM.wav", NULL,SND_ASYNC|SND_FILENAME|SND_LOOP);
+            // PlaySound("GBGM.wav", NULL,SND_ASYNC|SND_FILENAME|SND_LOOP);
         }
         else if (mouseX >= -0.2 && mouseX <= 0.2 && mouseY >= 0.105 && mouseY <= 0.235)
         {
@@ -1479,36 +1456,54 @@ void mouseClick(int button, int state, int x, int y)
 
     }
 }
+struct glassColor
+{
+    float r;
+    float g;
+    float b;
+};
+struct buildingColor
+{
+    float r;
+    float g;
+    float b;
+};
+glassColor g1= {0.85, 1.00, 1.00};
+buildingColor b= {0.33, 0.37, 0.41};
+buildingColor bl2= {0.38, 0.43, 0.49};
+buildingColor bl3= {0.56, 0.62, 0.68};
+buildingColor bl4= {0.35, 0.38, 0.38};
+buildingColor bl5= { 0.28, 0.24, 0.25};
 void buildingOne()
 {
     float x=-.95;
     float y=-1;
     building1 b1;
-    b1= {x,y,.95,.29,9,3,0.79,0.79,0.79,1,1,1};
+    b1= {x,y,.95,.29,9,3,b.r,b.g,b.b,g1.r,g1.g,g1.b};
     buildings.push_back(b1);
     x+=.35;
     building1 b2;
-    b2= {x,y,.6,.19,6,2,1,0,0,1,1,1};
+    b2= {x,y,.6,.19,6,2,bl2.r,bl2.g,bl2.b,g1.r,g1.g,g1.b};
     buildings.push_back(b2);
     x+=.25;
     building1 b3;
-    b3= {x,y,.95,.19,9,2,0.79,0.79,0.79,1,1,1};
+    b3= {x,y,.95,.19,9,2,bl5.r,bl5.g,bl5.b,g1.r,g1.g,g1.b};
     buildings.push_back(b3);
     x+=.25;
     building1 b4;
-    b4= {x,y,.5,.19,5,2,1,0,0,1,1,1};
+    b4= {x,y,.5,.19,5,2,b.r,b.g,b.b,g1.r,g1.g,g1.b};
     buildings.push_back(b4);
     x+=.25;
     building1 b5;
-    b5= {x,y,.6,.19,6,2,1,0,0,1,1,1};
+    b5= {x,y,.6,.19,6,2,bl5.r,bl5.g,bl5.b,g1.r,g1.g,g1.b};
     buildings.push_back(b5);
     x+=.25;
     building1 b6;
-    b6= {x,y,.95,.29,9,3,0.79,0.79,0.79,1,1,1};
+    b6= {x,y,.95,.29,9,3,bl4.r,bl4.g,bl4.b,g1.r,g1.g,g1.b};
     buildings.push_back(b6);
     x+=.35;
     building1 b7;
-    b7= {x,y,1.05,.19,10,2,0.79,0.79,0.79,1,1,1};
+    b7= {x,y,1.05,.19,10,2,b.r,b.g,b.b,g1.r,g1.g,g1.b};
     buildings.push_back(b7);
     x+=.35;
 
@@ -1520,31 +1515,31 @@ void buildingTwo()
     float x=-.95;
     float y=-1;
     building1 b1;
-    b1= {x,y,1.15,.29,11,3,0.79,0.79,0.79,1,1,1};
+    b1= {x,y,1.15,.29,11,3,bl5.r,bl5.g,bl5.b,g1.r,g1.g,g1.b};
     buildings2.push_back(b1);
     x+=.35;
     building1 b2;
-    b2= {x,y,.8,.19,8,2,1,0,0,1,1,1};
+    b2= {x,y,.8,.19,8,2,bl4.r,bl4.g,bl4.b,g1.r,g1.g,g1.b};
     buildings2.push_back(b2);
     x+=.25;
     building1 b3;
-    b3= {x,y,1.15,.19,11,2,0.79,0.79,0.79,1,1,1};
+    b3= {x,y,1.15,.19,11,2,bl2.r,bl2.g,bl2.b,g1.r,g1.g,g1.b};
     buildings2.push_back(b3);
     x+=.25;
     building1 b4;
-    b4= {x,y,.7,.19,7,2,1,0,0,1,1,1};
+    b4= {x,y,.7,.19,7,2,b.r,b.g,b.b,g1.r,g1.g,g1.b};
     buildings2.push_back(b4);
     x+=.25;
     building1 b5;
-    b5= {x,y,.8,.19,8,2,1,0,0,1,1,1};
+    b5= {x,y,.8,.19,8,2,bl4.r,bl4.g,bl4.b,g1.r,g1.g,g1.b};
     buildings2.push_back(b5);
     x+=.25;
     building1 b6;
-    b6= {x,y,1.3,.29,12,3,0.79,0.79,0.79,1,1,1};
+    b6= {x,y,1.3,.29,12,3,bl4.r,bl4.g,bl4.b,g1.r,g1.g,g1.b};
     buildings2.push_back(b6);
     x+=.35;
     building1 b7;
-    b7= {x,y,1.15,.19,11,2,0.79,0.79,0.79,1,1,1};
+    b7= {x,y,1.15,.19,11,2,b.r,b.g,b.b,g1.r,g1.g,g1.b};
     buildings2.push_back(b7);
     x+=.35;
 }
@@ -1554,32 +1549,32 @@ void buildingThree()
     float x=-.95;
     float y=-1;
     building1 b1;
-    b1= {x,y,1.5,.29,14,3,0.79,0.79,0.79,1,1,1};
+    b1= {x,y,1.5,.29,14,3,bl4.r,bl4.g,bl4.b,g1.r,g1.g,g1.b};
     buildings3.push_back(b1);
     x+=.35;
     building1 b2;
-    b2= {x,y,1.15,.19,11,2,1,0,0,1,1,1};
+    b2= {x,y,1.15,.19,11,2,bl2.r,bl2.g,bl2.b,g1.r,g1.g,g1.b};
     buildings3.push_back(b2);
     x+=.25;
     building1 b3;
-    b3= {x,y,1.6,.19,15,2,0.79,0.79,0.79,1,1,1};
+    b3= {x,y,1.6,.19,15,2,bl4.r,bl4.g,bl4.b,g1.r,g1.g,g1.b};
     buildings3.push_back(b3);
     x+=.25;
     building1 b4;
-    b4= {x,y,1.05,.19,10,2,1,0,0,1,1,1};
+    b4= {x,y,1.05,.19,10,2,bl2.r,bl2.g,bl2.b,g1.r,g1.g,g1.b};
     buildings3.push_back(b4);
     x+=.25;
     building1 b6;
-    b6= {x,y,1.5,.29,14,3,0.79,0.79,0.79,1,1,1};
+    b6= {x,y,1.5,.29,14,3,b.r,b.g,b.b,g1.r,g1.g,g1.b};
     buildings3.push_back(b6);
     x+=.35;
     building1 b5;
-    b5= {x,y,1.15,.19,11,2,1,0,0,1,1,1};
+    b5= {x,y,1.15,.19,11,2,bl4.r,bl4.g,bl4.b,g1.r,g1.g,g1.b};
     buildings3.push_back(b5);
     x+=.25;
 
     building1 b7;
-    b7= {x,y,1.5,.19,14,2,0.79,0.79,0.79,1,1,1};
+    b7= {x,y,1.5,.19,14,2,bl5.r,bl5.g,bl5.b,g1.r,g1.g,g1.b};
     buildings3.push_back(b7);
     x+=.35;
 }
@@ -1600,7 +1595,12 @@ int main(int argc, char **argv)
     glutDisplayFunc(drawScene);
     glutKeyboardFunc(keyFun);
     glutMouseFunc(mouseClick);
-     glutPassiveMotionFunc(mouseMotion);
+    glutPassiveMotionFunc(mouseMotion);
+    if(!gameStart)
+    {
+        playGBGM(0);
+
+    }
 
     glutTimerFunc(100,cloudUpdate,0);
     glutTimerFunc(25, planeUpdate, 0);
