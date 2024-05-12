@@ -846,8 +846,8 @@ void teamInfo()
     Text3("21-45113-2 ",.15,-.4);
 //4
     Text3("4. ",-.4,-.5);
-    Text3("Roudro Rahman ",-.35,-.5);
-    Text3("22-46310-1 ",.15,-.5);
+    Text3("Ariful islam rifat",-.35,-.5);
+    Text3("21-45140-2 ",.15,-.5);
 
 
 
