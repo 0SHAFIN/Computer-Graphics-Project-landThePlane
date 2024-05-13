@@ -1022,7 +1022,7 @@ void drawScene()
 
             Text2("Game Over!!",-0.2f, 0.0f);
             Text2("You lost. ",-0.15f, -0.1f);
-
+           Text4(" Press ESC to exit or press <-- to back",.3,-.8);
 
         }
         if(gameWin)
@@ -1143,9 +1143,11 @@ void planeUpdate(int value)
                 gameLife--;
                 playLifeMinus();
                 fuelX=.3;
-                scorE=0;
-
-                gameScore="Score: 0";
+                scorE=scorE2;
+                gameScore="";
+                stringstream ss;
+                ss << fixed <<setprecision(1) << scorE;
+                gameScore="Score: "+ss.str();
 
             }
 
@@ -1186,6 +1188,7 @@ void planeUpdate(int value)
         {
 
             gameLevel+=1;
+            scorE2=scorE;
             levelUpBGM();
             gameL="Game Level: "+to_string(gameLevel);
             scorE+=box1.y*6+fuelX*10+gameLife*5;
@@ -1285,6 +1288,7 @@ void bulletUpdate(int value)
                     if(gameLevel<3)
                     {
                         gameLevel+=1;
+                        scorE2=scorE;
                         levelUpBGM();
 
                         gameL=to_string(gameLevel);
@@ -1356,6 +1360,9 @@ void keyFun(unsigned char key, int x, int y)
     else if(key == 8)
     {
         navigation='M';
+         gameStart=false;
+        gameOver=false;
+        gameWin=false;
     }
     else if(key == 13)
     {
